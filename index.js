@@ -50,6 +50,7 @@ function checkApi() {
           volume: cryptoData.volume,
           volume_7d: cryptoData.volume_7d,
           is_listed: cryptoData.is_listed,
+          price_change_24h: cryptoData.price_change_24h
           updated_at: new Date().toISOString(),
         };
 
