@@ -18,7 +18,7 @@ let interval;
 function startCheckApiInterval() {
   if (!isWebSocketActive) {
     // Start the interval to run checkApi() every 10 seconds
-    interval = setInterval(checkApi, 1000);
+    interval = setInterval(checkApi, 1500);
     isWebSocketActive = true;
   }
 }
@@ -33,7 +33,7 @@ function stopCheckApiInterval() {
 
 function checkApi() {
   sdk
-    .multiData({ assets: "bitcoin,litecoin" })
+    .multiData({ assets: "bitcoin,litecoin,ethereum" })
     .then((response) => {
       //console.log("Entire API response:", response); // Log the entire response object
 
