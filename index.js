@@ -33,7 +33,7 @@ function stopCheckApiInterval() {
 
 function checkApi() {
   sdk
-    .multiData({ assets: "bitcoin,litecoin,ethereum" })
+    .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
     .then((response) => {
       //console.log("Entire API response:", response); // Log the entire response object
 
