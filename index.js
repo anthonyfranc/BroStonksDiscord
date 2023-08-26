@@ -58,7 +58,7 @@ function checkApi() {
         supabase
           .from("crypto")
           .upsert([record], { onConflict: ["name"] })
-          .then((response) => console.log("Upsert Data"))
+          .then((response) => console.log(response))
           .catch((error) => console.error("Error upserting:", error));
       }
     })
