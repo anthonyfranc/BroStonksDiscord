@@ -5,7 +5,7 @@ const wss = new WebSocket.Server({ server });
 
 const { createClient } = require("@supabase/supabase-js");
 
-const supabaseUrl = "http://157.230.89.176:8000";
+const supabaseUrl = "157.230.89.176:8000";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNjkyOTM2MDAwLAogICJleHAiOiAxODUwNzg4ODAwCn0.xnHurrvhEvLxHKWRiHEeD-r5SVdOU-NqMgz5mB8BqG8";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
