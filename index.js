@@ -3,7 +3,14 @@ const WebSocket = require('ws');
 const server = http.createServer();
 const wss = new WebSocket.Server({ server });
 
+const cors = require('cors'); // Import the cors package
+const express = require('express');
+const app = express();
+
 const { createClient } = require("@supabase/supabase-js");
+
+// Use the cors middleware
+app.use(cors());
 
 const supabaseUrl = "https://supabase.brostonks.com";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNjkzMDU5OTYyLCJleHAiOjIwMDg0MTk5NjJ9.JnlrUwdGleburTGcmWTCMlzAe0dzSxkZmQ2i3BjWyJM";
