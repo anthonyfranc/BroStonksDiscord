@@ -32,16 +32,18 @@ function stopCheckApiInterval() {
 }
 
 function checkApi() {
+  console.log("Starting API check"); // Debugging: Add a log statement at the beginning
+
   sdk
     .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
     .then((response) => {
-      //console.log("Entire API response:", response); // Log the entire response object
+      console.log("API response received"); // Debugging: Log when the API response is received
 
-      // Extract the 'data' object from the response
       const cryptocurrencies = response.data.data;
 
-      // Iterate over the keys (e.g., "bitcoin") inside the 'cryptocurrencies' object and upsert each one
       for (const [name, cryptoData] of Object.entries(cryptocurrencies)) {
+        console.log(`Processing ${name}`); // Debugging: Log which cryptocurrency is being processed
+
         const record = {
           name: name,
           market_cap: cryptoData.market_cap,
@@ -50,7 +52,6 @@ function checkApi() {
           volume: cryptoData.volume,
           volume_7d: cryptoData.volume_7d,
           is_listed: cryptoData.is_listed,
-          //price_change_24h: cryptoData.price_change_24h
           updated_at: new Date().toISOString(),
         };
 
