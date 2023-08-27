@@ -7,6 +7,7 @@ const { createClient } = require("@supabase/supabase-js");
 
 const supabaseUrl = "https://web.brostonks.com";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE";
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const sdk = require("api")("@mobula-api/v1.0#4cpc4om4lkxxs6mc");
 sdk.auth("227cbd70-db72-4532-a285-bfaf74481af5"); // Set the authorization header using the auth method
@@ -31,18 +32,16 @@ function stopCheckApiInterval() {
 }
 
 function checkApi() {
-  console.log("Starting API check"); // Debugging: Add a log statement at the beginning
-
   sdk
     .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
     .then((response) => {
-      console.log("API response received"); // Debugging: Log when the API response is received
+      //console.log("Entire API response:", response); // Log the entire response object
 
+      // Extract the 'data' object from the response
       const cryptocurrencies = response.data.data;
 
+      // Iterate over the keys (e.g., "bitcoin") inside the 'cryptocurrencies' object and upsert each one
       for (const [name, cryptoData] of Object.entries(cryptocurrencies)) {
-        console.log(`Processing ${name}`); // Debugging: Log which cryptocurrency is being processed
-
         const record = {
           name: name,
           market_cap: cryptoData.market_cap,
@@ -51,13 +50,14 @@ function checkApi() {
           volume: cryptoData.volume,
           volume_7d: cryptoData.volume_7d,
           is_listed: cryptoData.is_listed,
+          //price_change_24h: cryptoData.price_change_24h
           updated_at: new Date().toISOString(),
         };
 
         supabase
           .from("crypto")
           .upsert([record], { onConflict: ["name"] })
-          .then((response) => console.log(response))
+          .then((response) => console.log("Upsert Data"))
           .catch((error) => console.error("Error upserting:", error));
       }
     })
