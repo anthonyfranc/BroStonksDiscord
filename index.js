@@ -27,7 +27,7 @@ function stopCheckApiInterval() {
   if (isWebSocketActive) {
     // Stop the interval
     clearInterval(interval);
-    isWebSocketActive = false;
+    isWebSocketActive = false; 
   }
 }
 
