@@ -5,8 +5,8 @@ const wss = new WebSocket.Server({ server });
 
 const { createClient } = require("@supabase/supabase-js");
 
-const supabaseUrl = "https://supabase.brostonks.com";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNjkzMDU5OTYyLCJleHAiOjIwMDg0MTk5NjJ9.JnlrUwdGleburTGcmWTCMlzAe0dzSxkZmQ2i3BjWyJM";
+const supabaseUrl = "https://web.brostonks.com";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE";
 
 const sdk = require("api")("@mobula-api/v1.0#4cpc4om4lkxxs6mc");
 sdk.auth("227cbd70-db72-4532-a285-bfaf74481af5"); // Set the authorization header using the auth method
