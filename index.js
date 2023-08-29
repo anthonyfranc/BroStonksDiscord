@@ -35,33 +35,49 @@ function checkApi() {
   sdk
     .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
     .then((response) => {
-      //console.log("Entire API response:", response); // Log the entire response object
-
-      // Extract the 'data' object from the response
       const cryptocurrencies = response.data.data;
 
-      // Iterate over the keys (e.g., "bitcoin") inside the 'cryptocurrencies' object and upsert each one
       for (const [name, cryptoData] of Object.entries(cryptocurrencies)) {
-        const record = {
-          name: name,
-          market_cap: cryptoData.market_cap,
-          liquidity: cryptoData.liquidity,
-          price: cryptoData.price,
-          volume: cryptoData.volume,
-          volume_7d: cryptoData.volume_7d,
-          is_listed: cryptoData.is_listed,
-          //price_change_24h: cryptoData.price_change_24h
-          updated_at: new Date().toISOString(),
-        };
-
+        // Fetch existing record from the database
         supabase
           .from("crypto")
-          .upsert([record], { onConflict: ["name"] })
-          .then((response) => console.log(response))
-          .catch((error) => console.error("Error upserting:", error));
+          .select("*")
+          .eq("name", name)
+          .single()
+          .then((dbRecord) => {
+            if (!dbRecord || hasFieldsChanged(dbRecord, cryptoData)) {
+              const record = {
+                name: name,
+                market_cap: cryptoData.market_cap,
+                liquidity: cryptoData.liquidity,
+                price: cryptoData.price,
+                volume: cryptoData.volume,
+                volume_7d: cryptoData.volume_7d,
+                is_listed: cryptoData.is_listed,
+                updated_at: new Date().toISOString(),
+              };
+
+              supabase
+                .from("crypto")
+                .upsert([record], { onConflict: ["name"] })
+                .then((response) => console.log(response))
+                .catch((error) => console.error("Error upserting:", error));
+            }
+          })
+          .catch((error) => console.error("Error fetching from database:", error));
       }
     })
     .catch((err) => console.error(err));
+}
+
+function hasFieldsChanged(dbRecord, newCryptoData) {
+  return (
+    dbRecord.market_cap !== newCryptoData.market_cap ||
+    dbRecord.liquidity !== newCryptoData.liquidity ||
+    dbRecord.price !== newCryptoData.price ||
+    dbRecord.volume !== newCryptoData.volume ||
+    dbRecord.volume_7d !== newCryptoData.volume_7d
+  );
 }
 
 wss.on('connection', (ws) => {
