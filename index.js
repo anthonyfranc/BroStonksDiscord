@@ -18,7 +18,7 @@ let interval;
 function startCheckApiInterval() {
   if (!isWebSocketActive) {
     // Start the interval to run checkApi() every 10 seconds
-    interval = setInterval(checkApi, 2);
+    interval = setInterval(checkApi, 2000);
     isWebSocketActive = true;
   }
 }
