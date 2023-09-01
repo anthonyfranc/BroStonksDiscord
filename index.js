@@ -34,13 +34,10 @@ function stopCheckApiInterval() {
 function checkApi() {
   sdk
     .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
-    .then((response) => {
-      //console.log("Entire API response:", response); // Log the entire response object
-
-      // Extract the 'data' object from the response
+    .then(async (response) => {
       const cryptocurrencies = response.data.data;
+      const records = [];
 
-      // Iterate over the keys (e.g., "bitcoin") inside the 'cryptocurrencies' object and upsert each one
       for (const [name, cryptoData] of Object.entries(cryptocurrencies)) {
         const record = {
           name: name,
@@ -54,15 +51,27 @@ function checkApi() {
           updated_at: new Date().toISOString(),
         };
 
-        supabase
+        records.push(record);
+      }
+
+      try {
+        const { data, error } = await supabase
           .from("crypto")
-          .upsert([record], { onConflict: ["name"] })
-          .then((response) => console.log(response))
-          .catch((error) => console.error("Error upserting:", error));
+          .upsert(records, { onConflict: ["name"] })
+          .select();
+
+        if (error) {
+          console.error("Error upserting:", error);
+        } else {
+          console.log("Upsert successful:", data);
+        }
+      } catch (error) {
+        console.error("Error upserting:", error);
       }
     })
     .catch((err) => console.error(err));
 }
+
 
 wss.on('connection', (ws) => {
   ws.on('message', (message) => {
