@@ -3,7 +3,7 @@ import { WebSocket } from 'ws';
 import http from 'http';
 
 const server = http.createServer();
-const wss = new WebSocket.Server({ noServer: true, path: '/discord-ws' });
+const wss = new WebSocket.Server({server, path: '/discord-ws' });
 
 const client = new Client({
   intents: [
