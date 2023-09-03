@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "concurrently \"node discord.mjs\" \"node index.js\""
+        "scale": "heroku scale worker=2",
+        "start": "concurrently \"node discord.mjs\" --cluster \"node index.js\""
     },
     "keywords": [],
     "author": "",
