@@ -1,7 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
 const server = http.createServer();
-const wss = new WebSocket.Server({ noServer: true, path: '/index-ws' });
+const wss = new WebSocket.Server({ path: '/index-ws' });
 
 const { createClient } = require("@supabase/supabase-js");
 
