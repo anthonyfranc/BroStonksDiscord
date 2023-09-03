@@ -62,7 +62,7 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-client.login('MTE0NzEzNzQxNTk4MzY2MTIzNw.GuWxaL.bxExuFOBeKJe91c34mra63sBj93GN1WrVUPqX0'); // Replace with your bot token
+client.login(process.env.discord_token); // Replace with your bot token
 
 const PORT = process.env.PORT || 4100;
 server.listen(PORT, () => {
