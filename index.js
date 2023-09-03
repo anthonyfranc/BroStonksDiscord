@@ -95,7 +95,7 @@ wss.on('connection', (ws) => {
 });
 
 
-const PORT = process.env.PORT || 36343; // Use the assigned Heroku port or a default port
+const PORT = process.env.PORT || 36345; // Use the assigned Heroku port or a default port
 server.listen(PORT, () => {
   console.log(`Node server listening on port ${PORT}`);
 });
