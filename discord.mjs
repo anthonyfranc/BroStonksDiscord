@@ -64,7 +64,7 @@ client.on('interactionCreate', async (interaction) => {
 
 client.login(process.env.discord_token); // Replace with your bot token
 
-const PORT = process.env.PORT || 36343; // Use the assigned Heroku port or a default port
+const PORT = process.env.PORT
 
 server.listen(PORT, () => {
   console.log(`Node server listening on port ${PORT}`);
