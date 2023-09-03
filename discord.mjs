@@ -3,7 +3,7 @@ import { WebSocket } from 'ws';
 import http from 'http';
 
 const server = http.createServer();
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ noServer: true, path: '/discord-ws' });
 
 const client = new Client({
   intents: [
@@ -64,7 +64,7 @@ client.on('interactionCreate', async (interaction) => {
 
 client.login(process.env.discord_token); // Replace with your bot token
 
-const PORT = 4100;
+const port = process.env.PORT || 36343; // Use the assigned Heroku port or a default port
 server.listen(PORT, () => {
   console.log(`Node server listening on port ${PORT}`);
 });
