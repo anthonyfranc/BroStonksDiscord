@@ -95,7 +95,7 @@ wss.on('connection', (ws) => {
 });
 
 
-const PORT = 4100;
+const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Node server listening on port ${PORT}`);
 });
