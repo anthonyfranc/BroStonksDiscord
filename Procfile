@@ -1,2 +1,1 @@
-web: node discord.mjs
-web: node index.js
+web: concurrently node discord.mjs node index.js
