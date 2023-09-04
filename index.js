@@ -1,99 +1,68 @@
-const http = require('http');
-const WebSocket = require('ws');
+import { Client, GatewayIntentBits } from 'discord.js';
+import { WebSocket } from 'ws';
+import http from 'http';
+
 const server = http.createServer();
-const wss = new WebSocket.Server({server, path: '/index-ws' });
+const wss = new WebSocket.Server({server, path: '/discord-ws' });
 
-const { createClient } = require("@supabase/supabase-js");
-
-const supabaseUrl = "https://jjtqvxvprcmblezstaks.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqdHF2eHZwcmNtYmxlenN0YWtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE3NjAxMjAsImV4cCI6MjAwNzMzNjEyMH0.glxbp12RNVsu6TaSqPGH_CUDs9AH7T1jNkfwLtz3ZQI";
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-const sdk = require("api")("@mobula-api/v1.0#4cpc4om4lkxxs6mc");
-sdk.auth("227cbd70-db72-4532-a285-bfaf74481af5"); // Set the authorization header using the auth method
-
-let isWebSocketActive = false; // Flag to track WebSocket activity
-let interval;
-
-function startCheckApiInterval() {
-  if (!isWebSocketActive) {
-    // Start the interval to run checkApi() every 10 seconds
-    interval = setInterval(checkApi, 1000);
-    isWebSocketActive = true;
-  }
-}
-
-function stopCheckApiInterval() {
-  if (isWebSocketActive) {
-    // Stop the interval
-    clearInterval(interval);
-    isWebSocketActive = false; 
-  }
-}
-
-function checkApi() {
-  sdk
-    .multiData({ assets: "bitcoin,litecoin,ethereum,tether,dogecoin" })
-    .then(async (response) => {
-      const cryptocurrencies = response.data.data;
-      const records = [];
-
-      for (const [name, cryptoData] of Object.entries(cryptocurrencies)) {
-        const record = {
-          name: name,
-          market_cap: cryptoData.market_cap,
-          liquidity: cryptoData.liquidity,
-          price: cryptoData.price,
-          volume: cryptoData.volume,
-          volume_7d: cryptoData.volume_7d,
-          is_listed: cryptoData.is_listed,
-          price_change_24h: cryptoData.price_change_24h,
-          updated_at: new Date().toISOString(),
-        };
-
-        records.push(record);
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from("crypto")
-          .upsert(records, { onConflict: ["name"] })
-          .select();
-
-        if (error) {
-          console.error("Error upserting:", error);
-        } else {
-          console.log("Upsert successful:", data);
-        }
-      } catch (error) {
-        console.error("Error upserting:", error);
-      }
-    })
-    .catch((err) => console.error(err));
-}
-
-
-wss.on('connection', (ws) => {
-  ws.on('message', (message) => {
-    const messageText = message.toString();
-    if (messageText === 'startFetching') {
-      startCheckApiInterval();
-    } else if (messageText.startsWith('ping:')) {
-      const originalPingTimestamp = messageText.split(':')[1];
-      const pongTimestamp = new Date().getTime();
-      ws.send(`pong:${pongTimestamp}:${originalPingTimestamp}`);
-    }
-  });
-
-  ws.on('close', () => {
-    stopCheckApiInterval(); // Stop the interval when the WebSocket connection is closed
-  });
-
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error);
-  };
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+  ],
 });
 
+// Keep track of connected WebSocket clients
+const connectedClients = new Set();
+
+wss.on('connection', (ws) => {
+  console.log('Connected to WebSocket server');
+
+  // Add the connected client to the set
+  connectedClients.add(ws);
+
+  ws.on('close', () => {
+    console.log('WebSocket client disconnected');
+    // Remove the disconnected client from the set
+    connectedClients.delete(ws);
+  });
+});
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('messageCreate', (message) => {
+  if (message.channel.id === '1146980018631737386') {
+    console.log(`${message.author.tag}: ${message.content}`);
+    
+    // Check if there are connected WebSocket clients
+    if (connectedClients.size > 0) {
+      const messageData = {
+        author: message.author.tag,
+        content: message.content,
+        timestamp: message.createdAt.toISOString(), // Include the timestamp
+      };
+      
+      // Send the message data to all connected clients
+      connectedClients.forEach((ws) => {
+        ws.send(JSON.stringify(messageData));
+      });
+    }
+  }
+});
+
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === 'ping') {
+    await interaction.reply('Pong!');
+  }
+});
+
+client.login(process.env.discord_token); // Replace with your bot token
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
