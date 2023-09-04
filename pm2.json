@@ -3,7 +3,7 @@
       {
         "name": "Discord",
         "script": "discord.mjs",
-        "instances": 2
+        "instances": 1
       },
       {
         "name": "Main",
