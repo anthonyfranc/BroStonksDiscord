@@ -1,1 +1,0 @@
-web: concurrently node ./discord.mjs node ./index.js
