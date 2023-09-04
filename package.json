@@ -5,8 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "scale": "heroku scale worker=2",
-        "start": "concurrently \"node discord.mjs\" --cluster \"node index.js\""
+        "start": "pm2 start pm2.json"
     },
     "keywords": [],
     "author": "",

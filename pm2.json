@@ -1,0 +1,14 @@
+{
+    "apps": [
+      {
+        "name": "Discord",
+        "script": "discord.mjs",
+        "instances": 2
+      },
+      {
+        "name": "Main",
+        "script": "index.js",
+        "instances": 1
+      }
+    ]
+  }
